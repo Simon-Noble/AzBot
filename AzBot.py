@@ -30,7 +30,6 @@ from lightbulb import help_command as help_command_
 from lightbulb import internal
 from lightbulb import plugins as plugins_
 from lightbulb.utils import data_store
-from lightbulb.utils import parser
 
 from RedSquareGreenSquare import Game
 

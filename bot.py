@@ -6,10 +6,9 @@ import json
 
 
 def get_token() -> str:
-    f = open("token.json")
-    file = f.read()
-    token = json.loads(file)["token"]
-    print(token)
+    with open("token.json") as f:
+        file = f.read()
+        token = json.loads(file)["token"]
     return token
 
 
@@ -56,51 +55,10 @@ async def typing_tracker(event: hikari.events.typing_events.GuildTypingEvent):
 @bot.listen(hikari.GuildMessageCreateEvent)
 async def message_response(event: hikari.events.message_events.GuildMessageCreateEvent):
     if not event.author.is_bot:
-        print(str(event.author) + " " + str(event.content))
-        # print(event.author_id)
-        guild = event.get_guild()
+        print(f"Author: {event.author} | Content:{str(event.content)} \n"
+              f"Author_id: {event.author_id} | Guild: {event.get_guild()}")
 
-        if event.content == "kill" and str(event.author) == "Azcanta#1540":
-            print("closing bot")
-            await bot.close()
-        elif event.content == "...":
-            print("banned " + str(event.author))
-            await guild.ban(user=event.author, reason="Cringe")
-            await bot.rest.create_message(channel=event.channel_id, content=("Banned user " + str(event.author)))
 
-        if str(event.author) == "55winner#8161":
-            ran = random.randint(0, 100)
-            if ran < 5:
-                await bot.rest.create_message(channel=event.channel_id, content=":thinking:")
-        elif str(event.author) == "Wheels#2711":
-            ran = random.randint(0, 100)
-            if ran < 5:
-                await bot.rest.create_message(channel=event.channel_id, content=":wheelchair:")
-        elif str(event.author) == "Marmalude#8730":
-            ran = random.randint(0, 100)
-            if ran < 5:
-                await bot.rest.create_message(channel=event.channel_id, content=
-                "https://media.discordapp.net/attachments/635315314468454415/815109541981061151/EvMibuRU4AIh_6L.png?width=747&height=682"
-                                              )
-        elif str(event.author) == "BreadBuddy1818#6606":
-            ran = random.randint(0, 100)
-            if ran < 25:
-                await bot.rest.create_message(channel=event.channel_id, content=":bread:")
-        elif str(event.author) == "shadow 1799#7629":
-            ran = random.randint(0, 100)
-            if ran < 25:
-                await bot.rest.create_message(channel=event.channel_id, content="...")
-
-        if 208807710676746241 in event.message.mentions.user_ids:
-            ran = random.randint(0, 100)
-            if ran < 15:
-                await bot.rest.create_message(channel=event.channel_id, content=(
-                    "Azcanta is not available right now, please leave a message."
-                ))
-
-        # new_category = await guild.create_category(name="test", position=3, reason="test", )
-        # print(new_category.position)
-        # new_channel = await guild.create_text_channel(name="Azcanta's Lair", category= new_category)
 
 
 @bot.command()
@@ -119,6 +77,7 @@ async def activate_full_power(ctx: lightbulb.context.slash.SlashContext):
     await ctx.respond("Full power de-activated, typing is now allowed")
     bot.full_power[ctx.guild_id] = False
     print(bot.full_power)
+
 
 
 @bot.command()
