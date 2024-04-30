@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime
+import time
 from abc import ABC
 
 import lightbulb
@@ -34,7 +35,9 @@ from lightbulb import plugins as plugins_
 from lightbulb.utils import data_store
 
 from RedSquareGreenSquare import Game
+from StopTypingEvent import StopTypingEvent
 from TypingTracker import TypingTracker
+from WriteToFileTextOutputBoundary import WriteToFileTextOutputBoundary
 
 PrefixT = t.Union[
     t.Sequence[str],
@@ -55,7 +58,8 @@ class AzBot(BotApp):
         self.full_power = {}
         self.guilds = []
         self.user_messages = {}
-        self.typing_tracker = TypingTracker()
+
+        self.typing_tracker = TypingTracker(WriteToFileTextOutputBoundary("Typing_Time.txt"))
 
         self.add_listeners()
         self.add_commands()
@@ -92,11 +96,12 @@ class AzBot(BotApp):
         @self.listen(hikari.GuildTypingEvent)
         async def typing_tracker(event: hikari.events.typing_events.GuildTypingEvent):
             # Triggers on the same typing every 8 seconds
-            print(f"Event started: {event.timestamp}")
+            user = await self.rest.fetch_user(event.user_id)
+            print(f"{user} started typing at: {event.timestamp}")
             self.typing_tracker.start_typing(event.user_id, event.timestamp)
 
             if self.full_power[event.guild_id]:
-                user = await self.rest.fetch_user(event.user_id)
+
                 if event.user_id == 208807710676746241:
                     return
 
@@ -104,6 +109,8 @@ class AzBot(BotApp):
 
                 await self.rest.edit_member(guild=event.guild_id, user=user, communication_disabled_until=return_time)
                 print(f" Timed out {user} for 15 seconds")
+
+            await self.dispatch(StopTypingEvent(event.app, event.user_id))
 
         @self.listen(hikari.GuildMessageCreateEvent)
         async def message_response(event: hikari.events.message_events.GuildMessageCreateEvent):
@@ -114,6 +121,11 @@ class AzBot(BotApp):
                 print(f"Author: {event.author} | Content:{str(event.content)} \n"
                       f"Author_id: {event.author_id} | Guild: {event.get_guild()} \n"
                       f"Time_typing: {delta}")
+
+        @self.listen(StopTypingEvent)
+        async def stop_typing(event: StopTypingEvent):
+            delta = self.typing_tracker.stop_typing(event.user)
+            print(f"Time_typing: {delta}")
 
     def add_commands(self):
         @self.command()
@@ -131,6 +143,8 @@ class AzBot(BotApp):
             await ctx.respond("Full power de-activated, typing is now allowed")
             self.full_power[ctx.guild_id] = False
             print(self.full_power)
+
+
 
 
 """

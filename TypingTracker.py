@@ -2,6 +2,8 @@ from datetime import datetime, timedelta
 
 from hikari import Snowflake
 
+from TextOutputBoundary import TextOutputBoundary
+
 
 class TypingTracker:
     """
@@ -13,10 +15,12 @@ class TypingTracker:
     currently_typing: dict[Snowflake: datetime]  # who is currently typing, when they started, and most
     #                                                          recent typing activity
     typing_totals: dict[Snowflake: timedelta]  # total typing time in the tracking period
+    output_boundary: TextOutputBoundary
 
-    def __init__(self):
+    def __init__(self, output_boundary: TextOutputBoundary):
         self.currently_typing = {}
         self.typing_totals = {}
+        self.output_boundary = output_boundary
 
     def _add_typing_time(self, user: Snowflake, delta: timedelta):
         if user in self.typing_totals:
@@ -55,6 +59,7 @@ class TypingTracker:
 
         self.currently_typing.pop(user)
 
+        self.output_boundary.write(str(self.typing_totals))
         return delta
 
     def stop_typing(self, user: Snowflake):
@@ -69,3 +74,6 @@ class TypingTracker:
         self.currently_typing.pop(user)
 
         self._add_typing_time(user, timedelta(seconds=4))
+
+        self.output_boundary.write(str(self.typing_totals))
+        return timedelta(seconds=4)
