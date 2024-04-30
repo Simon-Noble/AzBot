@@ -37,7 +37,11 @@ class TypingTracker:
         """
         if user in self.currently_typing:
             delta: timedelta = self.currently_typing[user] - typing_time
-            self._add_typing_time(user, delta)
+
+            if delta > timedelta(seconds=10):
+                self._add_typing_time(user, timedelta(seconds=4))
+            else:
+                self._add_typing_time(user, delta)
 
         self.currently_typing[user] = typing_time
 
@@ -55,25 +59,13 @@ class TypingTracker:
 
         delta: timedelta = sent_time - self.currently_typing[user]
 
-        self._add_typing_time(user, delta)
+        if delta > timedelta(seconds=10):
+            self._add_typing_time(user, timedelta(seconds=4))
+        else:
+            self._add_typing_time(user, delta)
 
         self.currently_typing.pop(user)
 
         self.output_boundary.write(str(self.typing_totals))
         return delta
 
-    def stop_typing(self, user: Snowflake):
-        """
-        It has been long enough since the last time event, add 4 seconds to the delta and
-        remove them from current typers
-        :return:
-        """
-        if user not in self.currently_typing:
-            return
-
-        self.currently_typing.pop(user)
-
-        self._add_typing_time(user, timedelta(seconds=4))
-
-        self.output_boundary.write(str(self.typing_totals))
-        return timedelta(seconds=4)

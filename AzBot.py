@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 import datetime
+import threading
+
 import time
 from abc import ABC
 
 import lightbulb
+from hikari import Event
 from lightbulb import BotApp
 import asyncio
 import collections.abc
@@ -110,7 +113,8 @@ class AzBot(BotApp):
                 await self.rest.edit_member(guild=event.guild_id, user=user, communication_disabled_until=return_time)
                 print(f" Timed out {user} for 15 seconds")
 
-            await self.dispatch(StopTypingEvent(event.app, event.user_id))
+
+            # await self.dispatch(StopTypingEvent(event.app, event.user_id))
 
         @self.listen(hikari.GuildMessageCreateEvent)
         async def message_response(event: hikari.events.message_events.GuildMessageCreateEvent):
@@ -122,10 +126,10 @@ class AzBot(BotApp):
                       f"Author_id: {event.author_id} | Guild: {event.get_guild()} \n"
                       f"Time_typing: {delta}")
 
-        @self.listen(StopTypingEvent)
+        """@self.listen(StopTypingEvent)
         async def stop_typing(event: StopTypingEvent):
             delta = self.typing_tracker.stop_typing(event.user)
-            print(f"Time_typing: {delta}")
+            print(f"Time_typing: {delta}")"""
 
     def add_commands(self):
         @self.command()
@@ -143,6 +147,14 @@ class AzBot(BotApp):
             await ctx.respond("Full power de-activated, typing is now allowed")
             self.full_power[ctx.guild_id] = False
             print(self.full_power)
+    """
+    @staticmethod
+    def _start_after_delay_on_new_thread(function: callable, seconds: int, args: any):
+        asyncio.sleep(seconds)
+        thread = threading.Thread(target=function, args=[args])
+        thread.start()
+    """
+
 
 
 
