@@ -5,18 +5,12 @@ import json
 
 import lightbulb
 from lightbulb import BotApp
-import typing as t
 
 import hikari
 
 from TalkingTracker import TalkingTracker
 from TypingTracker import TypingTracker
 from WriteToFileTextOutputBoundary import WriteToFileTextOutputBoundary
-
-PrefixT = t.Union[
-    t.Sequence[str],
-    t.Callable[["BotApp", hikari.Message], t.Union[t.Sequence[str], t.Coroutine[t.Any, t.Any, t.Sequence[str]]]],
-]
 
 
 class AzBot(BotApp):

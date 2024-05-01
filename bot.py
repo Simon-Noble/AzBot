@@ -1,6 +1,6 @@
-
+import lightbulb
 from lightbulb.ext import tasks
-from AzBot import *
+from AzBot import AzBot
 import json
 
 
