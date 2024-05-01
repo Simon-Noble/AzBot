@@ -39,6 +39,7 @@ from lightbulb.utils import data_store
 
 from RedSquareGreenSquare import Game
 from StopTypingEvent import StopTypingEvent
+from TalkingTracker import TalkingTracker
 from TypingTracker import TypingTracker
 from WriteToFileTextOutputBoundary import WriteToFileTextOutputBoundary
 
@@ -54,6 +55,7 @@ class AzBot(BotApp):
     full_power: dict[hikari.Snowflake, bool]
     user_messages: dict[hikari.Snowflake, int]
     typing_tracker: TypingTracker
+    talking_tracker: TalkingTracker
 
     def __init__(self, token: str) -> None:
         super().__init__(token=token)
@@ -63,7 +65,7 @@ class AzBot(BotApp):
         self.user_messages = {}
 
         self.typing_tracker = TypingTracker(WriteToFileTextOutputBoundary("Typing_Time.txt"))
-
+        self.talking_tracker = TalkingTracker(WriteToFileTextOutputBoundary("Talking_Time.txt"))
         self.add_listeners()
         self.add_commands()
 
@@ -91,17 +93,30 @@ class AzBot(BotApp):
             new_channel = await guild.create_text_channel(name="Azcanta's Lair", category=new_category)
         """
 
-        @self.listen(hikari.VoiceEvent)
-        async def voice_event_response(event: hikari.VoiceEvent):
-            print(f"GildId: {event.guild_id} Shard: {event.shard} \n"
-                  f"User Id {event.shard.get_user_id()}")
+        @self.listen(hikari.VoiceStateUpdateEvent)
+        async def voice_event_response(event: hikari.VoiceStateUpdateEvent):
+            user_id = event.state.user_id
+            user = await self.rest.fetch_user(user_id)
+            guild = await self.rest.fetch_guild(event.guild_id)
+            talking_time = datetime.datetime.now()
+
+            if event.state.channel_id is not None:
+                channel = await self.rest.fetch_channel(event.state.channel_id)
+                self.talking_tracker.join_call(user.username, talking_time)
+                print(f"\n{user} connected to: {channel} in: {guild}")
+            elif event.old_state is not None:
+                channel = await self.rest.fetch_channel(event.old_state.channel_id)
+                delta = self.talking_tracker.leave_call(user.username, talking_time)
+                print(f"\n{user} left: {channel} in: {guild}, after talking for {delta}")
+            else:
+                print(f"No current or previous state")
 
         @self.listen(hikari.GuildTypingEvent)
         async def typing_tracker(event: hikari.events.typing_events.GuildTypingEvent):
             # Triggers on the same typing every 8 seconds
             user = await self.rest.fetch_user(event.user_id)
             print(f"{user} started typing at: {event.timestamp}")
-            self.typing_tracker.start_typing(event.user_id, event.timestamp)
+            self.typing_tracker.start_typing(user.username, event.timestamp)
 
             if self.full_power[event.guild_id]:
 
@@ -112,15 +127,13 @@ class AzBot(BotApp):
 
                 await self.rest.edit_member(guild=event.guild_id, user=user, communication_disabled_until=return_time)
                 print(f" Timed out {user} for 15 seconds")
-
-
             # await self.dispatch(StopTypingEvent(event.app, event.user_id))
 
         @self.listen(hikari.GuildMessageCreateEvent)
         async def message_response(event: hikari.events.message_events.GuildMessageCreateEvent):
             if not event.author.is_bot:
 
-                delta = self.typing_tracker.sent_message(event.author_id, event.message.timestamp)
+                delta = self.typing_tracker.sent_message(event.author.username, event.message.timestamp)
 
                 print(f"Author: {event.author} | Content:{str(event.content)} \n"
                       f"Author_id: {event.author_id} | Guild: {event.get_guild()} \n"
