@@ -34,7 +34,6 @@ def main():
         await ctx.respond("i am a subcommand")
     
     """
-    # print(str(bot.get_listeners(hikari.GuildMessageCreateEvent)) + "============================================")
 
     bot.run()
 

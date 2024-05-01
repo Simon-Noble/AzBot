@@ -11,19 +11,23 @@ class TypingTracker:
     """
 
     currently_typing: dict[str: datetime]  # who is currently typing and when they started
-    typing_totals: dict[str: timedelta]  # total typing time in the tracking period
+    typing_totals: dict[str: int]  # total typing time in the tracking period
     output_boundary: TextOutputBoundary
 
-    def __init__(self, output_boundary: TextOutputBoundary):
+    def __init__(self, output_boundary: TextOutputBoundary,
+                 starting_state: dict[str: timedelta] = None):
         self.currently_typing = {}
-        self.typing_totals = {}
+        if starting_state is not None:
+            self.typing_totals = starting_state
+        else:
+            self.typing_totals = {}
         self.output_boundary = output_boundary
 
     def _add_typing_time(self, user: str, delta: timedelta):
         if user in self.typing_totals:
-            self.typing_totals[user] += delta
+            self.typing_totals[user] += int(delta.seconds)
         else:
-            self.typing_totals[user] = delta
+            self.typing_totals[user] = int(delta.seconds)
 
     def start_typing(self, user: str, typing_time: datetime):
         """
@@ -67,7 +71,7 @@ class TypingTracker:
 
         self.currently_typing.pop(user)
 
-        self.output_boundary.write(str(self.typing_totals))
+        self.output_boundary.write(self.typing_totals)
         return delta
 
     @staticmethod

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import datetime
+import json
+
 import lightbulb
 from lightbulb import BotApp
 import typing as t
@@ -32,8 +34,17 @@ class AzBot(BotApp):
         self.guilds = []
         self.user_messages = {}
 
-        self.typing_tracker = TypingTracker(WriteToFileTextOutputBoundary("Typing_Time.txt"))
-        self.talking_tracker = TalkingTracker(WriteToFileTextOutputBoundary("Talking_Time.txt"))
+        with open("Typing_Time.txt") as f:
+            typing_file = f.read()
+            starting_typing = json.loads(typing_file)
+        typing_output_boundary = WriteToFileTextOutputBoundary("Typing_Time.txt")
+        self.typing_tracker = TypingTracker(typing_output_boundary, starting_typing)
+
+        with open("Talking_Time.txt") as f:
+            talking_file = f.read()
+            starting_talking = json.loads(talking_file)
+        talking_output_boundary = WriteToFileTextOutputBoundary("Talking_Time.txt")
+        self.talking_tracker = TalkingTracker(talking_output_boundary, starting_talking)
 
         self.add_listeners()
         self.add_commands()
@@ -57,7 +68,7 @@ class AzBot(BotApp):
             print(type(event))
             guild = event.get_guild()
 
-            new_category = await guild.create_category(name="Azcanta Land", position=3, reason="Azcanta's Home", )
+            new_category = await guild.create_category(name="Azcanta Land", position=3, reason="Azcanta's Home")
             print(new_category.position)
             new_channel = await guild.create_text_channel(name="Azcanta's Lair", category=new_category)
         """
@@ -92,7 +103,7 @@ class AzBot(BotApp):
                 if event.user_id == 208807710676746241:
                     return
 
-                return_time = datetime.datetime.now() + datetime.timedelta(seconds=15)
+                return_time = event.timestamp + datetime.timedelta(seconds=15)
 
                 await self.rest.edit_member(guild=event.guild_id, user=user, communication_disabled_until=return_time)
                 print(f" Timed out {user} for 15 seconds")
@@ -104,7 +115,7 @@ class AzBot(BotApp):
 
                 delta = self.typing_tracker.sent_message(event.author.username, event.message.timestamp)
 
-                print(f"Author: {event.author} | Content:{str(event.content)} \n"
+                print(f"\nAuthor: {event.author} | Content:{str(event.message.content)} \n"
                       f"Author_id: {event.author_id} | Guild: {event.get_guild()} \n"
                       f"Time_typing: {delta}")
 

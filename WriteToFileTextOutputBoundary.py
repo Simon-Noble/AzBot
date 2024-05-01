@@ -1,3 +1,5 @@
+import json
+
 from TextOutputBoundary import TextOutputBoundary
 
 
@@ -8,6 +10,6 @@ class WriteToFileTextOutputBoundary(TextOutputBoundary):
     def __init__(self, file_name: str):
         self.file_name = file_name
 
-    def write(self, text: str):
+    def write(self, text: any):
         with open(self.file_name, mode="w") as f:
-            f.write(text)
+            json.dump(text, f)

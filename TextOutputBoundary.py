@@ -5,5 +5,5 @@ class TextOutputBoundary:
     This class is an interface, the thing being written to could be anything
 
     """
-    def write(self, text: str):
+    def write(self, text: any):
         raise NotImplementedError
