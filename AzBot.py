@@ -1,44 +1,12 @@
 from __future__ import annotations
 
 import datetime
-import threading
-
-import time
-from abc import ABC
-
 import lightbulb
-from hikari import Event
 from lightbulb import BotApp
-import asyncio
-import collections.abc
-import functools
-import importlib
-import inspect
-import logging
-import os
-import pathlib
-import re
-import sys
 import typing as t
-from importlib import util
 
 import hikari
-from hikari.internal import ux
-from multidict import CIMultiDict
 
-from lightbulb import checks
-from lightbulb import commands
-from lightbulb import context as context_
-from lightbulb import decorators
-from lightbulb import errors
-from lightbulb import events
-from lightbulb import help_command as help_command_
-from lightbulb import internal
-from lightbulb import plugins as plugins_
-from lightbulb.utils import data_store
-
-from RedSquareGreenSquare import Game
-from StopTypingEvent import StopTypingEvent
 from TalkingTracker import TalkingTracker
 from TypingTracker import TypingTracker
 from WriteToFileTextOutputBoundary import WriteToFileTextOutputBoundary
@@ -66,6 +34,7 @@ class AzBot(BotApp):
 
         self.typing_tracker = TypingTracker(WriteToFileTextOutputBoundary("Typing_Time.txt"))
         self.talking_tracker = TalkingTracker(WriteToFileTextOutputBoundary("Talking_Time.txt"))
+
         self.add_listeners()
         self.add_commands()
 
@@ -167,13 +136,3 @@ class AzBot(BotApp):
         thread = threading.Thread(target=function, args=[args])
         thread.start()
     """
-
-
-
-
-
-"""
-make a typing time manager class
-seoerate functionality
-
-"""

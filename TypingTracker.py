@@ -75,4 +75,3 @@ class TypingTracker:
         if delta < timedelta(0):
             delta += timedelta(days=1)
         return delta
-
