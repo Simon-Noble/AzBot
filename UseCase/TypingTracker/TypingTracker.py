@@ -1,9 +1,11 @@
 from datetime import datetime, timedelta
 
 from TextOutputBoundary import TextOutputBoundary
+from UseCase.TypingTracker.TypingTrackerInputBoundary import TypingTrackerInputBoundary
+from UseCase.TypingTracker.TypingTrackerInputData import TypingTrackerInputData
 
 
-class TypingTracker:
+class TypingTracker(TypingTrackerInputBoundary):
     """
     Manages tracking typing times for various users
 
@@ -29,18 +31,20 @@ class TypingTracker:
         else:
             self.typing_totals[user] = int(delta.seconds)
 
-    def start_typing(self, user: str, typing_time: datetime):
+    def start_typing(self, input_data: TypingTrackerInputData):
         """
         Record that a user has started typing
         If that user is already typing reset their typing and add the difference to their time
 
 
         """
+        user = input_data.user
+        typing_time = input_data.time
+
         if user in self.currently_typing:
             delta: timedelta = self.currently_typing[user] - typing_time
 
             delta = self._normalize_delta(delta)
-
             if delta > timedelta(seconds=10):
                 self._add_typing_time(user, timedelta(seconds=4))
             else:
@@ -48,20 +52,17 @@ class TypingTracker:
 
         self.currently_typing[user] = typing_time
 
-    def sent_message(self, user: str, sent_time: datetime):
+    def sent_message(self, input_data: TypingTrackerInputData):
         """
         If the user was typing in the previous 8 seconds, take the difference ad att it to their typing total
-
-        :param user:
-        :param sent_time:
-        :return:
         """
+        user = input_data.user
+        sent_time = input_data.time
 
         if user not in self.currently_typing:
             return
 
         delta: timedelta = sent_time - self.currently_typing[user]
-
         delta = self._normalize_delta(delta)
 
         if delta > timedelta(seconds=10):
@@ -70,7 +71,6 @@ class TypingTracker:
             self._add_typing_time(user, delta)
 
         self.currently_typing.pop(user)
-
         self.output_boundary.write(self.typing_totals)
         return delta
 

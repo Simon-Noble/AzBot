@@ -1,9 +1,11 @@
 from datetime import datetime, timedelta
 
 from TextOutputBoundary import TextOutputBoundary
+from UseCase.TalkingTracker.TalkingTrackerInputBoundary import TalkingTrackerInputBoundary
+from UseCase.TalkingTracker.TalkingTrackerInputData import TalkingTrackerInputData
 
 
-class TalkingTracker:
+class TalkingTracker(TalkingTrackerInputBoundary):
 
     currently_in_call: dict[str: datetime]
     total_call_times: dict[str: int]
@@ -24,22 +26,19 @@ class TalkingTracker:
         else:
             self.total_call_times[user] = int(delta.seconds)
 
-    def join_call(self, user_name: str, time: datetime):
-        if user_name in self.currently_in_call:
+    def join_call(self, input_data: TalkingTrackerInputData):
+        if input_data.user in self.currently_in_call:
             return
 
-        self.currently_in_call[user_name] = time
+        self.currently_in_call[input_data.user] = input_data.time
 
-    def leave_call(self, user_name: str, time: datetime) -> timedelta:
-        if user_name not in self.currently_in_call:
+    def leave_call(self, input_data: TalkingTrackerInputData):
+        if input_data.user not in self.currently_in_call:
             return timedelta(0)
 
-        start_time = self.currently_in_call.pop(user_name)
-
-        delta = time - start_time
-
-        self._add_talking_time(user_name, delta)
-
+        start_time = self.currently_in_call.pop(input_data.user)
+        delta = input_data.time - start_time
+        self._add_talking_time(input_data.user, delta)
         self.output_boundary.write(self.total_call_times)
 
         return delta
