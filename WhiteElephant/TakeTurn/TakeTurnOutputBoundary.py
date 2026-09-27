@@ -5,10 +5,10 @@ from WhiteElephant.infrastructure.GenericStateOutputData import GenericStateOutp
 
 
 @dataclass(frozen=True)
-class GetCurrentStateOutputData(GenericStateOutputData):
+class TakeTurnOutputData(GenericStateOutputData):
     pass
 
 
-class GetCurrentStateOutputBoundary(ABC):
+class TakeTurnOutputBoundary(ABC):
     @abstractmethod
-    async def present(self, output: GetCurrentStateOutputData ) -> None: ...
+    async def present(self, output: TakeTurnOutputData ) -> None: ...

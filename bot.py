@@ -1,4 +1,3 @@
-import lightbulb
 from AzBot import AzBot
 import json
 

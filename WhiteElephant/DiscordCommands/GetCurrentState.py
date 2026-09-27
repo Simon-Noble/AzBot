@@ -3,11 +3,7 @@ import lightbulb
 from WhiteElephant.GetCurrentState.GetCurrentStateInputBoundary import GetCurrentStateInputData, \
     GetCurrentStateInputBoundary
 from WhiteElephant.GetCurrentState.GetCurrentStatePresenter import GetCurrentStatePresenter
-from WhiteElephant.infrastructure.Leader import Leader
 from WhiteElephant.infrastructure.LeaderManager import LeaderManager
-from WhiteElephant.NominateLeader.NominateLeaderInputBoundary import NominateLeaderInputBoundary, \
-    NominateLeaderInputData
-from WhiteElephant.NominateLeader.NominateLeaderPresenter import NominateLeaderPresenter
 
 leaderManager = LeaderManager()
 
@@ -21,9 +17,9 @@ class GetCurrentState(
 
 
     @lightbulb.invoke
-    async def invoke(self, ctx: lightbulb.Context, input_boundary: GetCurrentStateInputBoundary) -> None:
+    async def invoke(self, ctx: lightbulb.Context, input_boundary: GetCurrentStateInputBoundary, leader_manager: LeaderManager) -> None:
 
         data = GetCurrentStateInputData(f"{ctx.channel_id}")
-        await input_boundary.execute(data, GetCurrentStatePresenter(ctx))
+        await input_boundary.execute(data, GetCurrentStatePresenter(ctx, leader_manager))
 
 

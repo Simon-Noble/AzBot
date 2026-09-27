@@ -3,17 +3,23 @@ import json
 from WhiteElephant.CreateNewDraft.CreateNewDraftInputBoundary import CreateNewDraftInputBoundary
 from WhiteElephant.CreateNewDraft.CreateNewDraftInteractor import CreateNewDraftInteractor
 from WhiteElephant.DiscordCommands.CreateNewWhiteElephantDraft import CreateNewWhiteElephantDraft
-from WhiteElephant.DiscordCommands.GetCurrentState import GetCurrentState
+from WhiteElephant.DiscordCommands.FinishNominations import FinishNominations
+from WhiteElephant.DiscordCommands.GetCurrentState import GetCurrentState, leaderManager
 from WhiteElephant.DiscordCommands.NominateLeader import NominateLeader
+from WhiteElephant.FinishNominations.FinishNominationsInputBoundary import FinishNominationsInputBoundary
+from WhiteElephant.FinishNominations.FinishNominationsInteractor import FinishNominationsInteractor
 from WhiteElephant.GetCurrentState.GetCurrentStateInputBoundary import GetCurrentStateInputBoundary
 from WhiteElephant.GetCurrentState.GetCurrentStateInteractor import GetCurrentStateInteractor
 from WhiteElephant.NominateLeader.NominateLeaderInteractor import NominateLeaderInteractor
+from WhiteElephant.TakeTurn.TakeTurnInputBoundary import TakeTurnInputBoundary
+from WhiteElephant.TakeTurn.TakeTurnInteractor import TakeTurnInteractor
 from WhiteElephant.entities.GameManager import GameManager
 import lightbulb
 
 import hikari
 
 from WhiteElephant.NominateLeader.NominateLeaderInputBoundary import NominateLeaderInputBoundary
+from WhiteElephant.infrastructure.LeaderManager import LeaderManager
 
 
 def get_guild() -> str:
@@ -30,6 +36,7 @@ class AzBot:
     user_messages: dict[hikari.Snowflake, int]
 
     game_manager: GameManager
+    leader_manager: LeaderManager
 
 
     def __init__(self, token: str, game_manager: GameManager) -> None:
@@ -46,6 +53,7 @@ class AzBot:
 
         self.guilds = []
         self.user_messages = {}
+        self.leader_manager = LeaderManager()
 
         self.add_listeners()
         self.add_commands()
@@ -96,6 +104,7 @@ class AzBot:
         interactor = NominateLeaderInteractor(self.game_manager)
         registry = self.client.di.registry_for(lightbulb.di.Contexts.DEFAULT)
         registry.register_value(NominateLeaderInputBoundary, interactor)
+        registry.register_value(LeaderManager, self.leader_manager)
         self.client.register(NominateLeader)
 
         interactor = CreateNewDraftInteractor(self.game_manager)
@@ -106,7 +115,17 @@ class AzBot:
         interactor = GetCurrentStateInteractor(self.game_manager)
         registry = self.client.di.registry_for(lightbulb.di.Contexts.DEFAULT)
         registry.register_value(GetCurrentStateInputBoundary, interactor)
+        registry.register_value(LeaderManager, self.leader_manager)
         self.client.register(GetCurrentState)
+
+        take_turn_interactor  = TakeTurnInteractor(self.game_manager)
+
+        interactor = FinishNominationsInteractor(self.game_manager)
+        registry = self.client.di.registry_for(lightbulb.di.Contexts.DEFAULT)
+        registry.register_value(FinishNominationsInputBoundary, interactor)
+        registry.register_value(TakeTurnInputBoundary, take_turn_interactor)
+        registry.register_value(LeaderManager, self.leader_manager)
+        self.client.register(FinishNominations)
 
         pass
 

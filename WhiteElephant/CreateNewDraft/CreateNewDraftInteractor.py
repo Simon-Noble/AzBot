@@ -2,7 +2,7 @@ from WhiteElephant.CreateNewDraft.CreateNewDraftInputBoundary import CreateNewDr
     CreateNewDraftInputData
 from WhiteElephant.CreateNewDraft.CreateNewDraftOutputBoundary import CreateNewDraftOutputBoundary, \
     CreateNewDraftOutputData
-from WhiteElephant.entities.GameManager import GameManager
+from WhiteElephant.entities.GameManager import GameManager, DuplicateGameException, DuplicateUserException
 
 
 class CreateNewDraftInteractor(CreateNewDraftInputBoundary):
@@ -16,9 +16,14 @@ class CreateNewDraftInteractor(CreateNewDraftInputBoundary):
             await presenter.present(CreateNewDraftOutputData(success=False, message="Please select at least one user."))
             return
 
+        try:
+            self.game_manager.create_game(data.users, data.game_id)
 
-        self.game_manager.create_game(data.users, data.game_id)
-
-        await presenter.present(CreateNewDraftOutputData(success=True, message="Draft successfully created. with"
+            await presenter.present(CreateNewDraftOutputData(success=True, message="Draft successfully created. with"
                                                                                f"users {data.users} in channel {data.game_id}"))
+        except DuplicateGameException:
+            await presenter.present(CreateNewDraftOutputData(success=False, message="There is an ongoing game in this channel."))
+        except DuplicateUserException:
+            await presenter.present(CreateNewDraftOutputData(success=False, message=
+                                                    "You can not include the same user more than once."))
 

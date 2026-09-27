@@ -1,6 +1,6 @@
 from WhiteElephant.NominateLeader.NominateLeaderOutputBoundary import NominateLeaderOutputBoundary, \
     NominateLeaderOutputData
-from WhiteElephant.entities.Game import DraftStartedException, TooManyLeadersException, DuplicateLeaderException
+from WhiteElephant.entities.Game import DraftStartedException, TooManyGiftsException, DuplicateGiftException
 from WhiteElephant.entities.GameManager import GameManager, GameNotFoundException
 from WhiteElephant.NominateLeader.NominateLeaderInputBoundary import NominateLeaderInputBoundary, \
     NominateLeaderInputData
@@ -21,23 +21,23 @@ class NominateLeaderInteractor(NominateLeaderInputBoundary):
             return
 
         try:
-            game.nominate_leader(data.user, data.leader)
+            game.add_gift_to_pool(data.user, data.leader_id)
         except DraftStartedException:
 
             await presenter.present(NominateLeaderOutputData(success=False, message="Draft started", leader=None))
             return
-        except TooManyLeadersException as e:
+        except TooManyGiftsException as e:
             await presenter.present(NominateLeaderOutputData(success=False, message=f"{data.user} has already selected "
                                                                                     f"2 leaders", leader=None))
 
             return
-        except DuplicateLeaderException:
-            await presenter.present(NominateLeaderOutputData(success=False, message=f"{data.leader.id} has already been "
-                                                                                    f"selected", leader=data.leader))
+        except DuplicateGiftException:
+            await presenter.present(NominateLeaderOutputData(success=False, message=f"{data.leader_id} has already been "
+                                                                                    f"selected", leader=data.leader_id))
             return
 
         await presenter.present(NominateLeaderOutputData(success=True, message="Successfully nominated leader",
-                                                         leader=data.leader))
+                                                         leader=data.leader_id))
 
 
 

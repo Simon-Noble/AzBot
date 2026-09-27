@@ -3,32 +3,32 @@ import lightbulb
 
 from WhiteElephant.GetCurrentState.GetCurrentStateOutputBoundary import GetCurrentStateOutputBoundary, \
     GetCurrentStateOutputData
+from WhiteElephant.infrastructure.DisplayHelpers import generate_pre_draft_display_message, \
+    generate_draft_display_message
+from WhiteElephant.infrastructure.LeaderManager import LeaderManager
 
 
 class GetCurrentStatePresenter(GetCurrentStateOutputBoundary):
     ctx: lightbulb.Context
-    def __init__(self, ctx: lightbulb.Context):
+    leader_manager: LeaderManager
+    def __init__(self, ctx: lightbulb.Context, leader_manager: LeaderManager) -> None:
         self.ctx = ctx
+        self.leader_manager = leader_manager
 
     async def present(self, output: GetCurrentStateOutputData) -> None:
         if not output.success:
             await self.ctx.respond(output.message)
             return
         if output.started:
-            message = (f"Draft is ongoing:"
-                       f"\nCurrent draft order: {output.turn_order}")
+            message = generate_draft_display_message(output, self.leader_manager)
+            await self.ctx.respond(message)
+
             return
         else:
-            message = f"Current Leader Selections:"
-            for user in output.users:
-
-                leaders = output.user_nominated_leaders[user]
-                message += f"\n"
-                for leader in leaders:
-                    icons = " ".join(filter(None, [leader.leader_emoji, leader.civ_emoji]))
-                    civs = leader.civ
-                    message += f"{icons} **{leader.name}** ({civs})  "
-                message += f"- nominated by {user}"
-            message +=f"\nDraft can start once each user has nominated 2 leaders"
+            message = generate_pre_draft_display_message(output, self.leader_manager)
             await self.ctx.respond(message)
         #        await self.ctx.respond(f"{icons} **{leader.name}** ({civs}) - nominated by {self.ctx.user.mention}".strip())
+
+
+
+
