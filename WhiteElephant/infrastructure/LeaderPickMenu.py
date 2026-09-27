@@ -14,7 +14,7 @@ class LeaderPickMenu(lightbulb.components.Menu):
     def __init__(self, next_user: str, data: GenericStateOutputData, input_boundary: TakeTurnInputBoundary,
                  presenter_factory: PresenterFactory, leader_manager: LeaderManager) -> None:
         self.next_user = next_user
-        self.leaders_by_id = {str(f.id): f for f in data.nominated_leaders}
+        self.leaders_by_id = {str(id): f for f in data.nominated_leaders}
         self.input_boundary = input_boundary
         self.presenter_factory = presenter_factory
         self.leader_manager = leader_manager

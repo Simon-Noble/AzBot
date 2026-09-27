@@ -37,9 +37,9 @@ def generate_draft_display_message(output: GenericStateOutputData, leader_manage
             if i == 0:
                 message += f" | "
 
-        message += f" They have been stolen from {output.stolen_picks[user]} times"
+        message += f" Thefts: {output.stolen_picks[user]} "
         if  output.stolen_picks[user] == 2:
-            message += f" and can no longer be stolen from."
+            message += f" PROTECTED"
 
 
     message += (

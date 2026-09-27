@@ -30,6 +30,6 @@ class FinishNominationsPresenter(FinishNominationsOutputBoundary):
 
         menu = LeaderPickMenu(data.turn_order[0], data, self.take_turn_input_boundary,
                               make_take_turn_presenter, self.leader_manager)
-        await self.ctx.respond("Pick a leader:", components=menu, ephemeral=False)
+        await self.ctx.respond("Pick a leader:", components=menu, ephemeral=True)
         await menu.attach(self.client, timeout=None)
         pass

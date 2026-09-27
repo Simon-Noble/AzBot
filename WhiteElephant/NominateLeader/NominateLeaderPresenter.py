@@ -22,4 +22,4 @@ class NominateLeaderPresenter(NominateLeaderOutputBoundary):
                                        self.leader_manager.BY_ID[leader_id].civ_emoji]))
         civs = self.leader_manager.BY_ID[leader_id].civ
         await self.ctx.respond(f"{icons} **{self.leader_manager.BY_ID[leader_id].name}** ({civs}) - nominated by "
-                               f"{self.ctx.user.mention}".strip())
+                               f"{self.ctx.user.mention}".strip(), ephemeral=True)
