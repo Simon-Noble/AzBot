@@ -1,11 +1,11 @@
 import lightbulb
 
-from WhiteElephant.CreateNewDraft.CreateNewDraftInputBoundary import CreateNewDraftInputData, \
+from WhiteElephant.DiscordCommands.CreateNewDraft.CreateNewDraftInputBoundary import CreateNewDraftInputData, \
     CreateNewDraftInputBoundary
-from WhiteElephant.CreateNewDraft.CreateNewDraftPresenter import CreateNewDraftPresenter
+from WhiteElephant.DiscordCommands.CreateNewDraft.CreateNewDraftPresenter import CreateNewDraftPresenter
 
 
-class CreateNewWhiteElephantDraft(
+class CreateNewWhiteElephantDraftCommand(
     lightbulb.SlashCommand,
     name="create-new-white-elephant-draft",
     description="Create a new white elephant draft containing the desired memebers."

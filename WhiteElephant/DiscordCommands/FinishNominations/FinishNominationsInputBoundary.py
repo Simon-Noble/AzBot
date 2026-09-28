@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
-from WhiteElephant.FinishNominations.FinishNominationsOutputBoundary import FinishNominationsOutputBoundary
+from WhiteElephant.DiscordCommands.FinishNominations.FinishNominationsOutputBoundary import FinishNominationsOutputBoundary
 
 
 @dataclass(frozen=True)

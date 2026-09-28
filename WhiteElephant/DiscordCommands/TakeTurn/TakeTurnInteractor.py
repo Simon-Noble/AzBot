@@ -1,5 +1,5 @@
-from WhiteElephant.TakeTurn.TakeTurnInputBoundary import TakeTurnInputBoundary, TakeTurnInputData
-from WhiteElephant.TakeTurn.TakeTurnOutputBoundary import TakeTurnOutputBoundary, TakeTurnOutputData
+from WhiteElephant.DiscordCommands.TakeTurn.TakeTurnInputBoundary import TakeTurnInputBoundary, TakeTurnInputData
+from WhiteElephant.DiscordCommands.TakeTurn.TakeTurnOutputBoundary import TakeTurnOutputBoundary, TakeTurnOutputData
 from WhiteElephant.entities.Game import DraftStartedException, OutOfOrderException, TooManyStealsException, \
     TooManyGiftsException
 from WhiteElephant.entities.GameManager import GameManager, GameNotFoundException

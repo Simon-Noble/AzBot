@@ -1,6 +1,6 @@
-from WhiteElephant.CreateNewDraft.CreateNewDraftInputBoundary import CreateNewDraftInputBoundary, \
+from WhiteElephant.DiscordCommands.CreateNewDraft.CreateNewDraftInputBoundary import CreateNewDraftInputBoundary, \
     CreateNewDraftInputData
-from WhiteElephant.CreateNewDraft.CreateNewDraftOutputBoundary import CreateNewDraftOutputBoundary, \
+from WhiteElephant.DiscordCommands.CreateNewDraft.CreateNewDraftOutputBoundary import CreateNewDraftOutputBoundary, \
     CreateNewDraftOutputData
 from WhiteElephant.entities.GameManager import GameManager, DuplicateGameException, DuplicateUserException
 

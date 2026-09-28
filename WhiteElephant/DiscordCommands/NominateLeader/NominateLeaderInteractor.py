@@ -1,8 +1,8 @@
-from WhiteElephant.NominateLeader.NominateLeaderOutputBoundary import NominateLeaderOutputBoundary, \
+from WhiteElephant.DiscordCommands.NominateLeader.NominateLeaderOutputBoundary import NominateLeaderOutputBoundary, \
     NominateLeaderOutputData
 from WhiteElephant.entities.Game import DraftStartedException, TooManyGiftsException, DuplicateGiftException
 from WhiteElephant.entities.GameManager import GameManager, GameNotFoundException
-from WhiteElephant.NominateLeader.NominateLeaderInputBoundary import NominateLeaderInputBoundary, \
+from WhiteElephant.DiscordCommands.NominateLeader.NominateLeaderInputBoundary import NominateLeaderInputBoundary, \
     NominateLeaderInputData
 
 

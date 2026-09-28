@@ -1,7 +1,7 @@
 
 import lightbulb
 
-from WhiteElephant.GetCurrentState.GetCurrentStateOutputBoundary import GetCurrentStateOutputBoundary, \
+from WhiteElephant.DiscordCommands.GetCurrentState.GetCurrentStateOutputBoundary import GetCurrentStateOutputBoundary, \
     GetCurrentStateOutputData
 from WhiteElephant.infrastructure.DisplayHelpers import generate_pre_draft_display_message, \
     generate_draft_display_message

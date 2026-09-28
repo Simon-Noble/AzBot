@@ -1,15 +1,15 @@
 import lightbulb
 
-from WhiteElephant.GetCurrentState.GetCurrentStateInputBoundary import GetCurrentStateInputData, \
+from WhiteElephant.DiscordCommands.GetCurrentState.GetCurrentStateInputBoundary import GetCurrentStateInputData, \
     GetCurrentStateInputBoundary
-from WhiteElephant.GetCurrentState.GetCurrentStatePresenter import GetCurrentStatePresenter
+from WhiteElephant.DiscordCommands.GetCurrentState.GetCurrentStatePresenter import GetCurrentStatePresenter
 from WhiteElephant.infrastructure.LeaderManager import LeaderManager
 
 leaderManager = LeaderManager()
 
 
 
-class GetCurrentState(
+class GetCurrentStateCommand(
     lightbulb.SlashCommand,
     name="get-current-state",  # Discord command names must be lowercase
     description="Display The Current Draft State",

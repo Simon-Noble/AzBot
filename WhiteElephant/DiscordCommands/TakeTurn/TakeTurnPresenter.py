@@ -3,8 +3,8 @@ from typing import Callable
 import lightbulb
 from lightbulb.components import MenuContext
 
-from WhiteElephant.TakeTurn.TakeTurnInputBoundary import TakeTurnInputBoundary
-from WhiteElephant.TakeTurn.TakeTurnOutputBoundary import TakeTurnOutputBoundary, TakeTurnOutputData
+from WhiteElephant.DiscordCommands.TakeTurn.TakeTurnInputBoundary import TakeTurnInputBoundary
+from WhiteElephant.DiscordCommands.TakeTurn.TakeTurnOutputBoundary import TakeTurnOutputBoundary, TakeTurnOutputData
 from WhiteElephant.infrastructure import DisplayHelpers
 from WhiteElephant.infrastructure.LeaderManager import LeaderManager
 

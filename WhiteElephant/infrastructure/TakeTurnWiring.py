@@ -1,5 +1,5 @@
 from WhiteElephant.infrastructure.LeaderPickMenu import LeaderPickMenu
-from WhiteElephant.TakeTurn.TakeTurnPresenter import TakeTurnPresenter
+from WhiteElephant.DiscordCommands.TakeTurn.TakeTurnPresenter import TakeTurnPresenter
 
 
 def make_leader_pick_menu(next_user, data, input_boundary, leader_manager):

@@ -1,6 +1,9 @@
+from pathlib import Path
+
 from AzBot import AzBot
 import json
 
+from WhiteElephant.GameStateStore.Jsonlinesgamestatestore import JsonLinesGameStateStore
 from WhiteElephant.entities.GameManager import GameManager
 
 
@@ -12,8 +15,8 @@ def get_token() -> str:
 
 
 def main():
-
-    game_manager = GameManager()
+    store = JsonLinesGameStateStore(Path(__file__).parent / "game_log.jsonl")
+    game_manager = GameManager(store= store)
 
     bot = AzBot(get_token(), game_manager)
 

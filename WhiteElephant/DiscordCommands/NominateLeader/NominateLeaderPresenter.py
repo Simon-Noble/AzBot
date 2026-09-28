@@ -1,6 +1,6 @@
 import lightbulb
 
-from WhiteElephant.NominateLeader.NominateLeaderOutputBoundary import NominateLeaderOutputBoundary, \
+from WhiteElephant.DiscordCommands.NominateLeader.NominateLeaderOutputBoundary import NominateLeaderOutputBoundary, \
     NominateLeaderOutputData
 from WhiteElephant.infrastructure.LeaderManager import LeaderManager
 

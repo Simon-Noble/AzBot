@@ -1,6 +1,6 @@
 import lightbulb
 
-from WhiteElephant.CreateNewDraft.CreateNewDraftOutputBoundary import CreateNewDraftOutputBoundary, \
+from WhiteElephant.DiscordCommands.CreateNewDraft.CreateNewDraftOutputBoundary import CreateNewDraftOutputBoundary, \
     CreateNewDraftOutputData
 
 
@@ -9,6 +9,6 @@ class CreateNewDraftPresenter(CreateNewDraftOutputBoundary):
     def __init__(self, ctx):
         self.ctx = ctx
     async def present(self, output: CreateNewDraftOutputData) -> None:
-
-        await self.ctx.respond(output.message)
+        message= output.message
+        await self.ctx.respond(message, ephemeral=True)
 

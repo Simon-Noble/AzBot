@@ -14,6 +14,7 @@ def generate_pre_draft_display_message(output: GenericStateOutputData, leader_ma
             message += f"{icons} **{leader_manager.BY_ID[leader_id].name}** ({leader_manager.BY_ID[leader_id].civ})  "
         message += f"- nominated by {user}"
     message += f"\nDraft can start once each user has nominated 2 leaders"
+    message += f"\nUse /nominate-leader to nominate leaders for the draft!"
     return message
 
 
@@ -49,7 +50,12 @@ def generate_draft_display_message(output: GenericStateOutputData, leader_manage
         message += f"{icons} "
 
     if len(output.turn_order)> 0:
-        message += f"\nIt is {output.turn_order[0]}'s turn"
+        message += f"\nDraft Order: "
+
+        for user in output.turn_order:
+            message+=f"{user} | "
     else:
         message += f"\nThe draft has finished!"
+
+
     return message

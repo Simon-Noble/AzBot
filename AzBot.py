@@ -1,31 +1,32 @@
 import json
 
-from WhiteElephant.CreateNewDraft.CreateNewDraftInputBoundary import CreateNewDraftInputBoundary
-from WhiteElephant.CreateNewDraft.CreateNewDraftInteractor import CreateNewDraftInteractor
-from WhiteElephant.DiscordCommands.CreateNewWhiteElephantDraft import CreateNewWhiteElephantDraft
-from WhiteElephant.DiscordCommands.FinishNominations import FinishNominations
-from WhiteElephant.DiscordCommands.GetCurrentState import GetCurrentState, leaderManager
-from WhiteElephant.DiscordCommands.NominateLeader import NominateLeader
-from WhiteElephant.FinishNominations.FinishNominationsInputBoundary import FinishNominationsInputBoundary
-from WhiteElephant.FinishNominations.FinishNominationsInteractor import FinishNominationsInteractor
-from WhiteElephant.GetCurrentState.GetCurrentStateInputBoundary import GetCurrentStateInputBoundary
-from WhiteElephant.GetCurrentState.GetCurrentStateInteractor import GetCurrentStateInteractor
-from WhiteElephant.NominateLeader.NominateLeaderInteractor import NominateLeaderInteractor
-from WhiteElephant.TakeTurn.TakeTurnInputBoundary import TakeTurnInputBoundary
-from WhiteElephant.TakeTurn.TakeTurnInteractor import TakeTurnInteractor
-from WhiteElephant.entities.GameManager import GameManager
+
 import lightbulb
 
 import hikari
 
-from WhiteElephant.NominateLeader.NominateLeaderInputBoundary import NominateLeaderInputBoundary
+from WhiteElephant.DiscordCommands.CreateNewDraft.CreateNewDraftInputBoundary import CreateNewDraftInputBoundary
+from WhiteElephant.DiscordCommands.CreateNewDraft.CreateNewDraftInteractor import CreateNewDraftInteractor
+from WhiteElephant.DiscordCommands.CreateNewDraft.CreateNewWhiteElephantDraftCommand import CreateNewWhiteElephantDraftCommand
+from WhiteElephant.DiscordCommands.FinishNominations.FinishNominationsCommand import FinishNominationsCommand
+from WhiteElephant.DiscordCommands.GetCurrentState.GetCurrentStateCommand import GetCurrentStateCommand
+from WhiteElephant.DiscordCommands.NominateLeader.NominateLeaderCommand import NominateLeaderCommand
+from WhiteElephant.DiscordCommands.FinishNominations.FinishNominationsInputBoundary import FinishNominationsInputBoundary
+from WhiteElephant.DiscordCommands.FinishNominations.FinishNominationsInteractor import FinishNominationsInteractor
+from WhiteElephant.DiscordCommands.GetCurrentState.GetCurrentStateInputBoundary import GetCurrentStateInputBoundary
+from WhiteElephant.DiscordCommands.GetCurrentState.GetCurrentStateInteractor import GetCurrentStateInteractor
+from WhiteElephant.DiscordCommands.NominateLeader.NominateLeaderInputBoundary import NominateLeaderInputBoundary
+from WhiteElephant.DiscordCommands.NominateLeader.NominateLeaderInteractor import NominateLeaderInteractor
+from WhiteElephant.DiscordCommands.TakeTurn.TakeTurnInputBoundary import TakeTurnInputBoundary
+from WhiteElephant.DiscordCommands.TakeTurn.TakeTurnInteractor import TakeTurnInteractor
+from WhiteElephant.entities.GameManager import GameManager
 from WhiteElephant.infrastructure.LeaderManager import LeaderManager
 
 
-def get_guild() -> str:
+def get_guilds() -> list[str]:
     with open("guild.json") as f:
         file = f.read()
-        guild = json.loads(file)["guild"]
+        guild = json.loads(file)["guilds"]
     return guild
 
 class AzBot:
@@ -42,8 +43,8 @@ class AzBot:
     def __init__(self, token: str, game_manager: GameManager) -> None:
         self.bot = hikari.GatewayBot(token)
 
-        enabled_guild = int(get_guild())
-        self.client = lightbulb.client_from_app(self.bot, default_enabled_guilds=[enabled_guild])
+        enabled_guild = [int(guild) for guild in get_guilds()]
+        self.client = lightbulb.client_from_app(self.bot, default_enabled_guilds=enabled_guild)
 
         self.bot.subscribe(hikari.StartingEvent, self.client.start)
         self.bot.subscribe(hikari.StoppingEvent, self.client.stop)
@@ -71,31 +72,7 @@ class AzBot:
 
 
 
-        @self.bot.listen(hikari.VoiceStateUpdateEvent)
-        async def voice_event_response(event: hikari.VoiceStateUpdateEvent):
-            user_id = event.state.user_id
-            user = await self.bot.rest.fetch_user(user_id)
-            guild = await self.bot.rest.fetch_guild(event.guild_id)
 
-            if event.state.channel_id is not None:
-                channel = await self.bot.rest.fetch_channel(event.state.channel_id)
-                print(f"\n{user} connected to: {channel} in: {guild}")
-            elif event.old_state is not None:
-                channel = await self.bot.rest.fetch_channel(event.old_state.channel_id)
-                print(f"\n{user} left: {channel} in: {guild}, after talking for ")
-            else:
-                print(f"No current or previous state")
-
-
-
-        @self.bot.listen(hikari.GuildMessageCreateEvent)
-        async def message_response(event: hikari.events.message_events.GuildMessageCreateEvent):
-            if not event.author.is_bot:
-
-
-                print(f"\nAuthor: {event.author} | Content:{str(event.message.content)} \n"
-                      f"Author_id: {event.author_id} | Guild: {event.get_guild()} \n"
-                      f"Time_typing: ")
 
 
 
@@ -105,18 +82,18 @@ class AzBot:
         registry = self.client.di.registry_for(lightbulb.di.Contexts.DEFAULT)
         registry.register_value(NominateLeaderInputBoundary, interactor)
         registry.register_value(LeaderManager, self.leader_manager)
-        self.client.register(NominateLeader)
+        self.client.register(NominateLeaderCommand)
 
         interactor = CreateNewDraftInteractor(self.game_manager)
         registry = self.client.di.registry_for(lightbulb.di.Contexts.DEFAULT)
         registry.register_value(CreateNewDraftInputBoundary, interactor)
-        self.client.register(CreateNewWhiteElephantDraft)
+        self.client.register(CreateNewWhiteElephantDraftCommand)
 
         interactor = GetCurrentStateInteractor(self.game_manager)
         registry = self.client.di.registry_for(lightbulb.di.Contexts.DEFAULT)
         registry.register_value(GetCurrentStateInputBoundary, interactor)
         registry.register_value(LeaderManager, self.leader_manager)
-        self.client.register(GetCurrentState)
+        self.client.register(GetCurrentStateCommand)
 
         take_turn_interactor  = TakeTurnInteractor(self.game_manager)
 
@@ -125,7 +102,7 @@ class AzBot:
         registry.register_value(FinishNominationsInputBoundary, interactor)
         registry.register_value(TakeTurnInputBoundary, take_turn_interactor)
         registry.register_value(LeaderManager, self.leader_manager)
-        self.client.register(FinishNominations)
+        self.client.register(FinishNominationsCommand)
 
         pass
 

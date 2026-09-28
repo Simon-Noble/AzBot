@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
-from WhiteElephant.TakeTurn.TakeTurnOutputBoundary import TakeTurnOutputBoundary
+from WhiteElephant.DiscordCommands.TakeTurn.TakeTurnOutputBoundary import TakeTurnOutputBoundary
 
 
 @dataclass(frozen=True)

@@ -1,14 +1,13 @@
 import lightbulb
 
-from WhiteElephant.FinishNominations.FinishNominationsInputBoundary import FinishNominationsInputBoundary, \
+from WhiteElephant.DiscordCommands.FinishNominations.FinishNominationsInputBoundary import FinishNominationsInputBoundary, \
     FinishNominationsInputData
-from WhiteElephant.FinishNominations.FinishNominationsPresenter import FinishNominationsPresenter
-from WhiteElephant.TakeTurn.TakeTurnInputBoundary import TakeTurnInputBoundary
-
+from WhiteElephant.DiscordCommands.FinishNominations.FinishNominationsPresenter import FinishNominationsPresenter
+from WhiteElephant.DiscordCommands.TakeTurn.TakeTurnInputBoundary import TakeTurnInputBoundary
 from WhiteElephant.infrastructure.LeaderManager import LeaderManager
 
 
-class FinishNominations(
+class FinishNominationsCommand(
     lightbulb.SlashCommand,
     name="finish-nominations",  # Discord command names must be lowercase
     description="Finish nomination period and begin the draft",

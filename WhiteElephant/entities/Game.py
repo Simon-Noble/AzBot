@@ -3,7 +3,11 @@ This class is for running a singly white elephant game
 
 
 """
+import copy
+import functools
 import random
+from typing import Callable
+
 
 class TooManyGiftsException(Exception):
     pass
@@ -19,6 +23,27 @@ class TooManyStealsException(Exception):
     pass
 class NoLeaderException(Exception):
     pass
+
+
+def logs_state(method):
+    """
+    Decorator for Game methods that change the game.
+
+    After the method finishes *successfully*, the new state is reported through game.on_change.
+    If the method raises, nothing is reported - so a mutating method should finish all of its
+    validation before it changes anything, otherwise memory and the log can disagree.
+    """
+
+    @functools.wraps(method)
+    def wrapper(self, *args, **kwargs):
+        result = method(self, *args, **kwargs)
+        if self.on_change is not None:
+            self.on_change(self)
+        return result
+
+    return wrapper
+
+
 
 class Game:
     users: list[str]
@@ -38,6 +63,7 @@ class Game:
 
 
     draft_stared: bool
+    on_change: Callable[["Game"], None] | None
 
     def __init__(self, users: list[str], game_id: str):
         self.users = users
@@ -56,8 +82,40 @@ class Game:
         self.current_assignment = {}
         self.current_chain = []
 
+        self.on_change = None
 
+    def to_dict(self) -> dict:
+        """Everything needed to rebuild this game, as plain JSON-friendly data (deep-copied)."""
+        return copy.deepcopy({
+            "users": self.users,
+            "game_id": self.game_id,
+            "nominated_gifts": self.nominated_gifts,
+            "user_nominated_gifts": self.user_nominated_gifts,
+            "turn_order": self.turn_order,
+            "unselected_gifts": self.unselected_gifts,
+            "current_assignment": self.current_assignment,
+            "gift_times_stolen": self.gift_times_stolen,
+            "user_times_stolen": self.user_times_stolen,
+            "current_chain": self.current_chain,
+            "draft_stared": self.draft_stared,
+        })
 
+    @classmethod
+    def from_dict(cls, data: dict) -> "Game":
+        """Inverse of to_dict. The returned game has no on_change hook until someone sets one."""
+        game = cls(data["users"], data["game_id"])
+        game.nominated_gifts = data["nominated_gifts"]
+        game.user_nominated_gifts = data["user_nominated_gifts"]
+        game.turn_order = data["turn_order"]
+        game.unselected_gifts = data["unselected_gifts"]
+        game.current_assignment = data["current_assignment"]
+        game.gift_times_stolen = data["gift_times_stolen"]
+        game.user_times_stolen = data["user_times_stolen"]
+        game.current_chain = data["current_chain"]
+        game.draft_stared = data["draft_stared"]
+        return game
+
+    @logs_state
     def add_gift_to_pool(self, user: str, gift: str) -> None:
         """
 
@@ -79,6 +137,7 @@ class Game:
         self.user_nominated_gifts[user].append(gift)
         self.nominated_gifts.append(gift)
 
+    @logs_state
     def begin_draft(self):
         if self.draft_stared:
             raise DraftStartedException("")
@@ -106,7 +165,7 @@ class Game:
         self.draft_stared = True
 
 
-
+    @logs_state
     def draw_from_pool(self, user: str) -> str:
         if not self.draft_stared:
             raise DraftStartedException("Draft not Started")
@@ -127,7 +186,7 @@ class Game:
         self.current_chain = []
         return gift
 
-
+    @logs_state
     def steal_gift(self, thief: str, gift: str) -> str:
         """
         Precondition: gift is currently held by some other user

@@ -2,9 +2,9 @@ import lightbulb
 
 from WhiteElephant.infrastructure.Leader import Leader
 from WhiteElephant.infrastructure.LeaderManager import LeaderManager
-from WhiteElephant.NominateLeader.NominateLeaderInputBoundary import NominateLeaderInputBoundary, \
+from WhiteElephant.DiscordCommands.NominateLeader.NominateLeaderInputBoundary import NominateLeaderInputBoundary, \
     NominateLeaderInputData
-from WhiteElephant.NominateLeader.NominateLeaderPresenter import NominateLeaderPresenter
+from WhiteElephant.DiscordCommands.NominateLeader.NominateLeaderPresenter import NominateLeaderPresenter
 
 
 def _label(leader: Leader) -> str:
@@ -25,7 +25,7 @@ async def leader_autocomplete(ctx: lightbulb.AutocompleteContext[str], leader_ma
     await ctx.respond([(_label(leader), leader.id) for leader in leader_manager.search(query, limit=15)])
 
 
-class NominateLeader(
+class NominateLeaderCommand(
     lightbulb.SlashCommand,
     name="nominateleader",  # Discord command names must be lowercase
     description="Nominate a Civilization VI leader",

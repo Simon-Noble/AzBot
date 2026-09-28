@@ -1,7 +1,7 @@
 
-from WhiteElephant.GetCurrentState.GetCurrentStateInputBoundary import GetCurrentStateInputBoundary, \
+from WhiteElephant.DiscordCommands.GetCurrentState.GetCurrentStateInputBoundary import GetCurrentStateInputBoundary, \
     GetCurrentStateInputData
-from WhiteElephant.GetCurrentState.GetCurrentStateOutputBoundary import GetCurrentStateOutputBoundary, \
+from WhiteElephant.DiscordCommands.GetCurrentState.GetCurrentStateOutputBoundary import GetCurrentStateOutputBoundary, \
     GetCurrentStateOutputData
 from WhiteElephant.entities.GameManager import GameManager, GameNotFoundException
 

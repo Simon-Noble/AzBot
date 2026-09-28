@@ -1,6 +1,6 @@
-from WhiteElephant.FinishNominations.FinishNominationsInputBoundary import FinishNominationsInputBoundary, \
+from WhiteElephant.DiscordCommands.FinishNominations.FinishNominationsInputBoundary import FinishNominationsInputBoundary, \
     FinishNominationsInputData
-from WhiteElephant.FinishNominations.FinishNominationsOutputBoundary import FinishNominationsOutputBoundary, \
+from WhiteElephant.DiscordCommands.FinishNominations.FinishNominationsOutputBoundary import FinishNominationsOutputBoundary, \
     FinishNominationsOutputData
 from WhiteElephant.entities.Game import DraftStartedException, SelectedGiftMismatchException
 from WhiteElephant.entities.GameManager import GameManager, GameNotFoundException

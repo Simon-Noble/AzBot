@@ -2,8 +2,8 @@ from typing import Callable
 
 import lightbulb
 
-from WhiteElephant.TakeTurn.TakeTurnInputBoundary import TakeTurnInputBoundary, TakeTurnInputData
-from WhiteElephant.TakeTurn.TakeTurnOutputBoundary import TakeTurnOutputBoundary
+from WhiteElephant.DiscordCommands.TakeTurn.TakeTurnInputBoundary import TakeTurnInputBoundary, TakeTurnInputData
+from WhiteElephant.DiscordCommands.TakeTurn.TakeTurnOutputBoundary import TakeTurnOutputBoundary
 from WhiteElephant.infrastructure.GenericStateOutputData import GenericStateOutputData
 from WhiteElephant.infrastructure.LeaderManager import LeaderManager
 
