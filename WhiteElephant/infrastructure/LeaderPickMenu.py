@@ -51,9 +51,9 @@ class LeaderPickMenu(lightbulb.components.Menu):
                                               presenter)
             return
         else:
-            leader = self.leaders_by_id[leader_id]
+            leader = self.leader_manager.BY_ID[leader_id]
             await self.input_boundary.execute(TakeTurnInputData(str(ctx.channel_id),True, ctx.user.mention,
-                                                                leader_to_steal= leader),
+                                                                leader_to_steal= leader_id),
                                               presenter)
             return
 

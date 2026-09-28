@@ -54,6 +54,7 @@ def generate_draft_display_message(output: GenericStateOutputData, leader_manage
 
         for user in output.turn_order:
             message+=f"{user} | "
+        message = message[:-3]
     else:
         message += f"\nThe draft has finished!"
 

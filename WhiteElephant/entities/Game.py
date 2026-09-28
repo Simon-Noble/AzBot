@@ -196,8 +196,11 @@ class Game:
         """
 
         # find victim and pick number
-        victim, pick_number = self.find_victim(gift)
-
+        data = self.find_victim(gift)
+        if data is None:
+            raise OutOfOrderException()
+        else:
+            victim, pick_number = data
         # ensure pick is valid and being done by a valid user
         if not self.draft_stared:
             raise DraftStartedException("Draft not started")
@@ -236,6 +239,19 @@ class Game:
         return gift
 
     def find_victim(self, gift: str) -> tuple[str, int] | None:
+        """
+        >>> game = Game(['a','b'],'1')
+        >>> game.add_gift_to_pool('a', 'gift')
+        >>> game.add_gift_to_pool('a', 'aa')
+        >>> game.add_gift_to_pool('b', 'aaa')
+        >>> game.add_gift_to_pool('b', 'aaaa')
+        >>> game.begin_draft()
+        >>> game.current_assignment['a'][0] = 'gift'
+        >>> print(game.find_victim('gift'))
+
+        :param gift:
+        :return:
+        """
         for potential_victim in self.users:
             for i in range(2):
                 if self.current_assignment[potential_victim][i] == gift:

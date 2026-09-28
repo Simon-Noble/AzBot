@@ -35,5 +35,5 @@ class TakeTurnPresenter(TakeTurnOutputBoundary):
         await self.ctx.respond(DisplayHelpers.generate_draft_display_message(data, self.leader_manager))
         if len(data.turn_order)>0:
             menu = self.menu_factory(data.turn_order[0], data, self.input_boundary, self.leader_manager)
-            await self.ctx.respond("Pick a leader:", components=menu, ephemeral=True)
+            await self.ctx.respond(f"{data.turn_order[0]}, pick a leader:", components=menu, ephemeral=False, user_mentions=True)
             await menu.attach(self.client, timeout=None)
