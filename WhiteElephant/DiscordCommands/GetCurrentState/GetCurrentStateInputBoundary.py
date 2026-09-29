@@ -7,6 +7,7 @@ from WhiteElephant.DiscordCommands.GetCurrentState.GetCurrentStateOutputBoundary
 @dataclass(frozen=True)
 class GetCurrentStateInputData:
     game_id: str
+    prompt_current_player: bool = False
 
 
 class GetCurrentStateInputBoundary(ABC):

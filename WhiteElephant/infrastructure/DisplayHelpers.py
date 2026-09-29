@@ -1,7 +1,6 @@
 from WhiteElephant.infrastructure.GenericStateOutputData import GenericStateOutputData
 from WhiteElephant.infrastructure.LeaderManager import LeaderManager
 
-
 def generate_pre_draft_display_message(output: GenericStateOutputData, leader_manager: LeaderManager) -> str:
     message = f"Current Leader Selections:"
     for user in output.users:
@@ -60,3 +59,6 @@ def generate_draft_display_message(output: GenericStateOutputData, leader_manage
 
 
     return message
+
+
+

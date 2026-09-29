@@ -89,13 +89,15 @@ class AzBot:
         registry.register_value(CreateNewDraftInputBoundary, interactor)
         self.client.register(CreateNewWhiteElephantDraftCommand)
 
+        take_turn_interactor  = TakeTurnInteractor(self.game_manager)
+
         interactor = GetCurrentStateInteractor(self.game_manager)
         registry = self.client.di.registry_for(lightbulb.di.Contexts.DEFAULT)
         registry.register_value(GetCurrentStateInputBoundary, interactor)
         registry.register_value(LeaderManager, self.leader_manager)
+        registry.register_value(TakeTurnInputBoundary, take_turn_interactor)
         self.client.register(GetCurrentStateCommand)
 
-        take_turn_interactor  = TakeTurnInteractor(self.game_manager)
 
         interactor = FinishNominationsInteractor(self.game_manager)
         registry = self.client.di.registry_for(lightbulb.di.Contexts.DEFAULT)

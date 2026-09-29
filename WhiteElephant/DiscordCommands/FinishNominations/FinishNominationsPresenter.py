@@ -4,11 +4,11 @@ from WhiteElephant.DiscordCommands.FinishNominations.FinishNominationsOutputBoun
     FinishNominationsOutputBoundary
 from WhiteElephant.DiscordCommands.TakeTurn.TakeTurnInputBoundary import TakeTurnInputBoundary
 from WhiteElephant.infrastructure import DisplayHelpers
+from WhiteElephant.infrastructure.DisplayHelpers import generate_draft_display_message
 from WhiteElephant.infrastructure.LeaderManager import LeaderManager
 from WhiteElephant.infrastructure.LeaderPickMenu import LeaderPickMenu
 
-from WhiteElephant.infrastructure.TakeTurnWiring import make_take_turn_presenter
-
+from WhiteElephant.infrastructure.TakeTurnWiring import make_take_turn_presenter, prompt_user_draft_pick
 
 
 class FinishNominationsPresenter(FinishNominationsOutputBoundary):
@@ -29,10 +29,8 @@ class FinishNominationsPresenter(FinishNominationsOutputBoundary):
         if not data.success:
             await self.ctx.respond(data.message)
             return
-        await self.ctx.respond(DisplayHelpers.generate_draft_display_message(data, self.leader_manager))
+        await self.ctx.respond(generate_draft_display_message(data, self.leader_manager))
 
-        menu = LeaderPickMenu(data.turn_order[0], data, self.take_turn_input_boundary,
-                              make_take_turn_presenter, self.leader_manager)
-        await self.ctx.respond(f"{data.turn_order[0]}, pick a leader:", components=menu, ephemeral=False ,user_mentions=True)
-        await menu.attach(self.client, timeout=None)
-        pass
+        await prompt_user_draft_pick(data, self.take_turn_input_boundary, self.leader_manager, self.ctx)
+
+

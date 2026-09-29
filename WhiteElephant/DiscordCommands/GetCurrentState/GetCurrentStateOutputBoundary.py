@@ -6,7 +6,7 @@ from WhiteElephant.infrastructure.GenericStateOutputData import GenericStateOutp
 
 @dataclass(frozen=True)
 class GetCurrentStateOutputData(GenericStateOutputData):
-    pass
+    prompt_current_player: bool = False
 
 
 class GetCurrentStateOutputBoundary(ABC):

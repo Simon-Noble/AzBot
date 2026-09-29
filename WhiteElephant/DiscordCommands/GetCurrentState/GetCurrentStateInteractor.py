@@ -20,6 +20,11 @@ class GetCurrentStateInteractor(GetCurrentStateInputBoundary):
             await presenter.present(GetCurrentStateOutputData(success=False, message="Game not found"))
             return
 
+        if game.draft_stared:
+            prompt = data.prompt_current_player
+        else:
+            prompt = False
+
         data = GetCurrentStateOutputData(success=True, message="", users= game.users,
                                          nominated_leaders=game.nominated_gifts,
                                          started=game.draft_stared, turn_order= game.turn_order,
@@ -28,5 +33,6 @@ class GetCurrentStateInteractor(GetCurrentStateInputBoundary):
                                          stolen_leaders=game.gift_times_stolen,
                                          stolen_picks=game.user_times_stolen,
                                          user_nominated_leaders=game.user_nominated_gifts,
-                                         current_chain= game.current_chain)
+                                         current_chain= game.current_chain,
+                                         prompt_current_player=prompt)
         await presenter.present(data)

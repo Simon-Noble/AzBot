@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Awaitable
 
 import lightbulb
 from lightbulb.components import MenuContext
@@ -9,6 +9,7 @@ from WhiteElephant.infrastructure import DisplayHelpers
 from WhiteElephant.infrastructure.LeaderManager import LeaderManager
 
 MenuFactory = Callable[[str, TakeTurnOutputData, TakeTurnInputBoundary, LeaderManager], lightbulb.components.Menu]
+PromptNextPick = Callable[[TakeTurnOutputData, TakeTurnInputBoundary, LeaderManager, lightbulb.Context], Awaitable[None]]
 
 class TakeTurnPresenter(TakeTurnOutputBoundary):
 
@@ -17,14 +18,17 @@ class TakeTurnPresenter(TakeTurnOutputBoundary):
     input_boundary: TakeTurnInputBoundary
     menu_factory: MenuFactory
     leader_manager: LeaderManager
+    prompt_next_pick: PromptNextPick
+
 
     def __init__(self, ctx: MenuContext, client: lightbulb.Client, input_boundary: TakeTurnInputBoundary,
-                 menu_factory: MenuFactory, leader_manager: LeaderManager) -> None:
+                 menu_factory: MenuFactory, leader_manager: LeaderManager, prompt_next_pick: PromptNextPick) -> None:
         self.ctx = ctx
         self.client = client
         self.input_boundary = input_boundary
         self.menu_factory = menu_factory
         self.leader_manager = leader_manager
+        self.prompt_next_pick = prompt_next_pick
 
     async def present(self, data: TakeTurnOutputData) -> None:
         if not data.success:
@@ -34,6 +38,4 @@ class TakeTurnPresenter(TakeTurnOutputBoundary):
 
         await self.ctx.respond(DisplayHelpers.generate_draft_display_message(data, self.leader_manager))
         if len(data.turn_order)>0:
-            menu = self.menu_factory(data.turn_order[0], data, self.input_boundary, self.leader_manager)
-            await self.ctx.respond(f"{data.turn_order[0]}, pick a leader:", components=menu, ephemeral=False, user_mentions=True)
-            await menu.attach(self.client, timeout=None)
+            await self.prompt_next_pick(data, self.input_boundary, self.leader_manager, self.ctx)
